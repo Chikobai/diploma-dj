@@ -1,12 +1,10 @@
 import time
 from datetime import datetime
-
 from django.core.exceptions import ObjectDoesNotExist
 from modules.models import Module
 from rest_framework import serializers
-from users.serializers import UserSerializer
 from reviews.models import Review
-
+from users.serializers import UserSerializer
 from .models import Skill, Course, OrderList, CourseSkills
 
 

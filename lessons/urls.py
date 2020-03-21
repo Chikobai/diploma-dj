@@ -5,8 +5,6 @@ from .views import LessonViewSet
 router = DefaultRouter()
 router.register(r'lessons', LessonViewSet, "lessons")
 
-
-# The API URLs are now determined automatically by the router.
 urlpatterns = [
     path('', include(router.urls)),
 ]

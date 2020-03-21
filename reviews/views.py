@@ -1,10 +1,7 @@
 import time
-
 from courses.models import Course
 from rest_framework import viewsets, status, permissions
 from rest_framework.response import Response
-from users.models import User
-
 from .models import Review
 from .serializers import ReviewSerializer
 

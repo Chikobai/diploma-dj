@@ -1,7 +1,6 @@
 import time
 from datetime import datetime
 from rest_framework import serializers
-from courses.serializers import CourseShortSerializer
 from users.serializers import UserSerializer
 from users.models import User
 from .models import Review

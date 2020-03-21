@@ -1,8 +1,6 @@
 from rest_framework import viewsets, permissions
-
 from .models import Module
-from courses.models import Course
-from .serializers import ModuleListSerializer, ModuleSerializer
+from .serializers import ModuleListSerializer
 
 
 class ModuleViewSet(viewsets.ModelViewSet):

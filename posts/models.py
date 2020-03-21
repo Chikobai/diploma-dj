@@ -1,6 +1,6 @@
+from courses.models import Course
 from django.conf import settings
 from django.db import models
-from courses.models import Course
 
 
 class UrlType(models.Model):
@@ -26,4 +26,3 @@ class Post(models.Model):
     date_create = models.DateTimeField(auto_now=True)
     date_update = models.DateTimeField(auto_now_add=True)
     viewed = models.IntegerField(default=0)
-

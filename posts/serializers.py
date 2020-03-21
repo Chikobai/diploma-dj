@@ -1,11 +1,9 @@
 import time
 from datetime import datetime
-
+from courses.serializers import CourseShortSerializer
 from rest_framework import serializers
-
-from courses.serializers import CourseSerializer, CourseShortSerializer
 from users.serializers import UserSerializer
-from .models import Post, PostType, UrlType
+from .models import Post
 
 
 class TimestampField(serializers.Field):
@@ -26,4 +24,5 @@ class PostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Post
-        fields = ['id', 'title', 'description', 'url', 'url_type', 'date_create', 'date_update', 'date_create_in_sec', 'date_updated_in_sec', 'viewed', 'teacher', 'course', 'post_type']
+        fields = ['id', 'title', 'description', 'url', 'url_type', 'date_create', 'date_update', 'date_create_in_sec',
+                  'date_updated_in_sec', 'viewed', 'teacher', 'course', 'post_type']

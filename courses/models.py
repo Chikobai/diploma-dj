@@ -8,7 +8,6 @@ class Skill(models.Model):
 
 
 class Course(models.Model):
-
     name = models.CharField(max_length=100, blank=True, default='')
     title = models.CharField(max_length=100, blank=True, default='')
     info = models.TextField(default='')
@@ -40,4 +39,3 @@ class CourseSkills(models.Model):
 class OrderList(models.Model):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='order_owner', on_delete=models.CASCADE)
     course = models.ForeignKey(Course, related_name='order_course', on_delete=models.CASCADE)
-

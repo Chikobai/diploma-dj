@@ -1,13 +1,11 @@
 from rest_framework import permissions, status
+from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from users.serializers import UserSerializer
-from users.models import User
-from .permissions import IsOwnerOrReadOnly
-from rest_framework import viewsets
-from .serializers import CourseSerializer, MyCourseSerializer, OrderListSerializer
 from .models import Course, OrderList
+from .permissions import IsOwnerOrReadOnly
+from .serializers import CourseSerializer, MyCourseSerializer, OrderListSerializer
 
 
 class CourseViewSet(viewsets.ModelViewSet):

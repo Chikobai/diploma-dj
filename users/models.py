@@ -4,13 +4,11 @@ from django.contrib.auth.models import (AbstractBaseUser, PermissionsMixin)
 from django.core.validators import (validate_email)
 from django.db import models
 from django.utils import timezone
-
 from .managers import UserManager
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-
-    email = models.EmailField(validators=[validate_email],max_length=128,unique=True)
+    email = models.EmailField(validators=[validate_email], max_length=128, unique=True)
     email_verified = models.BooleanField(default=False)
 
     first_name = models.CharField(max_length=50, blank=True)

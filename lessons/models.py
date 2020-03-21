@@ -26,6 +26,3 @@ class Lesson(models.Model):
     questions = models.ManyToManyField(Question, related_name='questions')
     videos = models.ManyToManyField(VideoLesson, related_name='videos')
     module = models.ForeignKey(Module, related_name='lesson_module', on_delete=models.CASCADE)
-
-
-

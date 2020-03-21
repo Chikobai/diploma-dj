@@ -1,18 +1,17 @@
-from rest_framework import serializers
-from .models import Module
 from lessons.models import Lesson
 from lessons.serializers import LessonShortSerializer
+from rest_framework import serializers
+
+from .models import Module
 
 
 class ModuleSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Module
         fields = ['id', 'title']
 
 
 class ModuleListSerializer(serializers.ModelSerializer):
-
     result = serializers.SerializerMethodField()
     lessons = LessonShortSerializer(source="lesson_module", many=True)
 

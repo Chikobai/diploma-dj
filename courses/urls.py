@@ -6,8 +6,6 @@ router = DefaultRouter()
 router.register(r'courses', CourseViewSet, "courses")
 router.register(r'mycourses', MyCourseViewSet, "mycourses")
 
-
-# The API URLs are now determined automatically by the router.
 urlpatterns = [
     path('', include(router.urls)),
     path('course/join/', JoinCourseView.as_view())

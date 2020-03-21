@@ -1,7 +1,6 @@
 from rest_framework import viewsets, permissions
-
 from .models import Lesson
-from .serializers import LessonSerializer, LessonShortSerializer
+from .serializers import LessonSerializer
 
 
 class LessonViewSet(viewsets.ModelViewSet):
