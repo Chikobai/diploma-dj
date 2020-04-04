@@ -108,31 +108,3 @@ class MyCourseSerializer(serializers.ModelSerializer):
         fields = ['course']
 
 
-class OrderListSerializer(serializers.Serializer):
-    message = serializers.CharField(read_only=True)
-    success = serializers.BooleanField(read_only=True, default=False)
-    user_id = serializers.IntegerField(write_only=True, default=False)
-    course_id = serializers.IntegerField(write_only=True, default=False)
-
-    def validate(self, data):
-
-        user_id = data.get('user_id', None)
-        course_id = data.get('course_id', None)
-        if user_id is None:
-            data['success'] = False
-            data['message'] = 'user_id not found'
-            return data
-        if course_id is None:
-            data['success'] = False
-            data['message'] = 'course_id not found'
-            return data
-        else:
-            try:
-                OrderList.objects.get(owner_id=user_id, course_id=course_id)
-            except ObjectDoesNotExist:
-                OrderList.objects.create(owner_id=user_id, course_id=course_id)
-
-            data['success'] = True
-            data['message'] = 'Все успешно сохранено!'
-
-            return data

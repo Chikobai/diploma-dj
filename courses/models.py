@@ -43,5 +43,5 @@ class CourseSkills(models.Model):
 
 
 class OrderList(models.Model):
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='order_owner', on_delete=models.CASCADE)
-    course = models.ForeignKey(Course, related_name='order_course', on_delete=models.CASCADE)
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='order_owner', on_delete=models.CASCADE, blank=True, null=True)
+    course = models.ForeignKey(Course, related_name='order_course', on_delete=models.CASCADE, blank=True, null=True)

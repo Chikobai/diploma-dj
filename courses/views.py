@@ -1,13 +1,15 @@
+from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import permissions, status
 from rest_framework import viewsets
 from rest_framework.generics import GenericAPIView
 from rest_framework.mixins import ListModelMixin
+from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .models import Course, OrderList, CourseCategory, Skill
 from .permissions import IsOwnerOrReadOnly
-from .serializers import CourseSerializer, MyCourseSerializer, OrderListSerializer, CourseCategorySerializer, \
+from .serializers import CourseSerializer, MyCourseSerializer, CourseCategorySerializer, \
     SkillSerializer
 
 
@@ -39,13 +41,32 @@ class MyCourseViewSet(viewsets.ModelViewSet):
 
 
 class JoinCourseView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
-        serializer = OrderListSerializer(data=request.data)
-        if serializer.is_valid():
-            return Response(serializer.data, status=status.HTTP_200_OK)
+        response_data = {}
+        user = request.user
+        id = request.data['course_id']
+        try:
+            course = Course.objects.get(id=id)
+        except ObjectDoesNotExist:
+            course = None
+
+        if course is None:
+            response_data['success'] = False
+            response_data['message'] = 'Данный обьект не существует'
+            return Response(response_data, status=status.HTTP_400_BAD_REQUEST)
+
+        order, created = OrderList.objects.get_or_create(owner_id=user.id, course_id=id)
+
+        if created:
+            response_data['success'] = True
+            response_data['message'] = 'Все успешно сохранено'
+            return Response(response_data, status=status.HTTP_201_CREATED)
         else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            response_data['success'] = False
+            response_data['message'] = 'Данный обьект уже имеется'
+            return Response(response_data, status=status.HTTP_400_BAD_REQUEST)
 
 
 class CourseCategoryViewSet(ListModelMixin, GenericAPIView):
