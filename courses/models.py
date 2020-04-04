@@ -7,6 +7,11 @@ class Skill(models.Model):
     code = models.AutoField(primary_key=True)
 
 
+class CourseCategory(models.Model):
+    name_kz = models.CharField(max_length=100, blank=True, default='')
+    name_ru = models.CharField(max_length=100, blank=True, default='')
+
+
 class Course(models.Model):
     name = models.CharField(max_length=100, blank=True, default='')
     title = models.CharField(max_length=100, blank=True, default='')
@@ -17,6 +22,7 @@ class Course(models.Model):
     language = models.CharField(max_length=50, blank=True)
 
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='owner', on_delete=models.CASCADE)
+    category = models.ForeignKey(CourseCategory, related_name='course_category', on_delete=models.CASCADE)
 
     created = models.DateTimeField(auto_now=True)
     updated = models.DateTimeField(auto_now_add=True)

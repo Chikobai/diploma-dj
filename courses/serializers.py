@@ -5,7 +5,7 @@ from modules.models import Module
 from rest_framework import serializers
 from reviews.models import Review
 from users.serializers import UserSerializer
-from .models import Skill, Course, OrderList, CourseSkills
+from .models import Skill, Course, OrderList, CourseSkills, CourseCategory
 
 
 class TimestampField(serializers.Field):
@@ -25,6 +25,12 @@ class SkillSerializer(serializers.ModelSerializer):
         fields = ['code', 'name']
 
 
+class CourseCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CourseCategory
+        fields = ['id', 'name_ru', 'name_kz']
+
+
 class CourseShortSerializer(serializers.ModelSerializer):
     class Meta:
         model = Course
@@ -41,6 +47,7 @@ class CourseSkillsSerializer(serializers.ModelSerializer):
 
 class CourseSerializer(serializers.ModelSerializer):
     owner = UserSerializer(many=False, read_only=True)
+    category = CourseCategorySerializer(many=False, read_only=True)
     # modules = ModuleSerializer(source='module_courses', many=True)
     user_counts = serializers.SerializerMethodField()
     module_counts = serializers.SerializerMethodField()
@@ -52,7 +59,7 @@ class CourseSerializer(serializers.ModelSerializer):
         model = Course
         fields = ['id', 'title', 'name', 'info', 'video_url', 'language', 'rating', 'user_counts', 'is_my_course',
                   'module_counts',
-                  'owner', 'is_my_course', 'course_skills']
+                  'owner', 'category','is_my_course', 'course_skills']
 
     def get_user_counts(self, obj):
         count = OrderList.objects.filter(course=obj).count()
