@@ -5,9 +5,10 @@ from rest_framework.mixins import ListModelMixin
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import Course, OrderList, CourseCategory
+from .models import Course, OrderList, CourseCategory, Skill
 from .permissions import IsOwnerOrReadOnly
-from .serializers import CourseSerializer, MyCourseSerializer, OrderListSerializer, CourseCategorySerializer
+from .serializers import CourseSerializer, MyCourseSerializer, OrderListSerializer, CourseCategorySerializer, \
+    SkillSerializer
 
 
 class CourseViewSet(viewsets.ModelViewSet):
@@ -50,6 +51,18 @@ class JoinCourseView(APIView):
 class CourseCategoryViewSet(ListModelMixin, GenericAPIView):
     queryset = CourseCategory.objects.all()
     serializer_class = CourseCategorySerializer
+    permission_classes = [permissions.AllowAny]
+
+    def get_paginated_response(self, data):
+        return Response(data)
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+
+class SkillsViewSet(ListModelMixin, GenericAPIView):
+    queryset = Skill.objects.all()
+    serializer_class = SkillSerializer
     permission_classes = [permissions.AllowAny]
 
     def get_paginated_response(self, data):

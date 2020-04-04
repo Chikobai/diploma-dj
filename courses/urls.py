@@ -1,6 +1,6 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import CourseViewSet, MyCourseViewSet, JoinCourseView, CourseCategoryViewSet
+from .views import CourseViewSet, MyCourseViewSet, JoinCourseView, CourseCategoryViewSet, SkillsViewSet
 
 router = DefaultRouter()
 router.register(r'courses', CourseViewSet, "courses")
@@ -10,4 +10,5 @@ urlpatterns = [
     path('', include(router.urls)),
     path('course/join/', JoinCourseView.as_view()),
     path('course/categories/', CourseCategoryViewSet.as_view()),
+    path('course/skills/', SkillsViewSet.as_view()),
 ]
