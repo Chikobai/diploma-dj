@@ -100,11 +100,3 @@ class CourseSerializer(serializers.ModelSerializer):
         return result / review_count
 
 
-class MyCourseSerializer(serializers.ModelSerializer):
-    course = CourseSerializer(many=False, read_only=True)
-
-    class Meta:
-        model = OrderList
-        fields = ['course']
-
-
