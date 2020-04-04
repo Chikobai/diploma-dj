@@ -1,11 +1,13 @@
 from rest_framework import permissions, status
 from rest_framework import viewsets
+from rest_framework.generics import GenericAPIView
+from rest_framework.mixins import ListModelMixin
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import Course, OrderList
+from .models import Course, OrderList, CourseCategory
 from .permissions import IsOwnerOrReadOnly
-from .serializers import CourseSerializer, MyCourseSerializer, OrderListSerializer
+from .serializers import CourseSerializer, MyCourseSerializer, OrderListSerializer, CourseCategorySerializer
 
 
 class CourseViewSet(viewsets.ModelViewSet):
@@ -43,3 +45,15 @@ class JoinCourseView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class CourseCategoryViewSet(ListModelMixin, GenericAPIView):
+    queryset = CourseCategory.objects.all()
+    serializer_class = CourseCategorySerializer
+    permission_classes = [permissions.AllowAny]
+
+    def get_paginated_response(self, data):
+        return Response(data)
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
