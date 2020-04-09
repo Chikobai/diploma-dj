@@ -23,10 +23,10 @@ class ModuleListSerializer(serializers.ModelSerializer):
     def get_result(self, obj):
         lesson = Lesson.objects.filter(module=obj)
         count, passed = 0, 0
-        for i in range(0, len(lesson)):
-            questions = lesson[i].questions.all()
-            videos = lesson[i].videos.all()
-            count += questions.count() + videos.count()
+        # for i in range(0, len(lesson)):
+        #     questions = lesson[i].questions.all()
+        #     videos = lesson[i].videos.all()
+        #     count += questions.count() + videos.count()
 
         return {
             'count': count,
