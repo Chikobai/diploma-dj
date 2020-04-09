@@ -22,7 +22,7 @@ class Course(models.Model):
     language = models.CharField(max_length=50, blank=True)
 
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='owner', on_delete=models.CASCADE)
-    category = models.ForeignKey(CourseCategory, related_name='course_category', on_delete=models.CASCADE)
+    category = models.ManyToManyField(CourseCategory, related_name='course_category')
 
     created = models.DateTimeField(auto_now=True)
     updated = models.DateTimeField(auto_now_add=True)

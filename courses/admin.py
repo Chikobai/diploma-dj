@@ -3,9 +3,14 @@ from .models import Skill, Course, CourseSkills, OrderList, CourseCategory
 from modules.models import Module
 
 
-class CourseSkilsInline(admin.TabularInline):
+class CourseSkillsInline(admin.TabularInline):
     model = CourseSkills
     extra = 3
+
+
+class CourseCategoryInline(admin.TabularInline):
+    model = CourseCategory
+    extra = 1
 
 
 class CourseModuleInline(admin.TabularInline):
@@ -14,7 +19,8 @@ class CourseModuleInline(admin.TabularInline):
 
 
 class CourseAdmin(admin.ModelAdmin):
-    inlines = [CourseSkilsInline]
+    inlines = [CourseSkillsInline]
+    filter_horizontal = ('category',)
 
 
 admin.site.register(Skill)
