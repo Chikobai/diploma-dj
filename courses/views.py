@@ -13,10 +13,17 @@ from .serializers import CourseSerializer, CourseCategorySerializer, \
 
 
 class CourseViewSet(viewsets.ModelViewSet):
-    queryset = Course.objects.all()
     serializer_class = CourseSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly,
                           IsOwnerOrReadOnly]
+
+    def get_queryset(self):
+
+        category = self.request.query_params.get("category_id", None)
+        if category is not None:
+            return Course.objects.filter(category__id=category)
+        else:
+            return Course.objects.all()
 
 
 class MyCourseViewSet(viewsets.ModelViewSet):
