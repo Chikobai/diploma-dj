@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from .models import Lesson, Question, VideoLesson, LessonTaker
+from .models import Lesson, Question, VideoLesson, Answer
+from operator import itemgetter
 
 
 class QuestionSerializer(serializers.ModelSerializer):
@@ -23,10 +24,6 @@ class LessonShortSerializer(serializers.ModelSerializer):
 
     # get lesson count
     def get_result(self, obj):
-        # user = self.context['request'].user
-        # count = Question.objects.filter(lesson=obj).count()
-        # lesson_taker = LessonTaker.objects.get(user=user.pk, lesson=obj.pk)
-        # passed = lesson_taker.correct_answers
         count, passed = 0, 0
         return {
             'count': count,
@@ -47,21 +44,32 @@ class LessonSerializer(serializers.ModelSerializer):
         videos = VideoLesson.objects.filter(lesson=obj)
         questions = Question.objects.filter(lesson=obj)
 
+        for question in questions:
+            answers = Answer.objects.filter(question=question)
+            values = dict()
+            values["id"] = question.pk
+            values["label"] = question.label
+            values["order"] = question.order
+            values["type"] = 2
+            answers_data = list()
+            for answer in answers:
+                data = dict()
+                data['id'] = answer.pk
+                data['text'] = answer.text
+                data['is_true'] = answer.is_true
+                answers_data.append(data)
+
+            values['answers'] = answers_data
+            response_data.append(values)
+
         for video in videos:
             values = dict()
             values["id"] = video.pk
             values["label"] = video.video_url
             values["order"] = video.order
             values["type"] = 1
+            values["answers"] = None
             response_data.append(values)
 
-        for i in range(questions.count()):
-            question = questions[i]
-            values = dict()
-            values["id"] = question.pk
-            values["label"] = question.label
-            values["order"] = question.order
-            values["type"] = 2
-            response_data.append(values)
-
-        return response_data
+        sorted_data = sorted(response_data, key=itemgetter('order'))
+        return sorted_data

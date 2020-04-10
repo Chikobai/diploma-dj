@@ -1,16 +1,18 @@
 from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework import permissions
+from rest_framework.mixins import RetrieveModelMixin
 from rest_framework.response import Response
+from rest_framework.viewsets import GenericViewSet
 
 from .models import Lesson, Question, Answer, LessonTaker
 from .serializers import LessonSerializer
 
 
-class LessonViewSet(viewsets.ModelViewSet):
+class LessonViewSet(GenericViewSet, RetrieveModelMixin):
     serializer_class = LessonSerializer
     permission_classes = [permissions.IsAuthenticated]
-    http_method_names = ['get']
+    # http_method_names = ['get']
 
     def get_queryset(self):
         id = self.kwargs['module_id']
