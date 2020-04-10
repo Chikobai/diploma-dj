@@ -36,32 +36,32 @@ class LessonShortSerializer(serializers.ModelSerializer):
 
 class LessonSerializer(serializers.ModelSerializer):
 
-    questions = serializers.SerializerMethodField()
-    videos = serializers.SerializerMethodField()
+    pages = serializers.SerializerMethodField()
 
     class Meta:
         model = Lesson
-        fields = ['id', 'title', 'description', 'time', 'videos' ,'questions']
+        fields = ['id', 'title', 'description', 'time', 'pages']
 
-    def get_videos(self, obj):
+    def get_pages(self, obj):
         response_data = list()
         videos = VideoLesson.objects.filter(lesson=obj)
+        questions = Question.objects.filter(lesson=obj)
+
         for video in videos:
             values = dict()
             values["id"] = video.pk
-            values["video_url"] = video.video_url
+            values["label"] = video.video_url
             values["order"] = video.order
+            values["type"] = 1
             response_data.append(values)
-        return response_data
 
-    def get_questions(self, obj):
-        response_data = list()
-        questions = Question.objects.filter(lesson=obj)
         for i in range(questions.count()):
             question = questions[i]
             values = dict()
             values["id"] = question.pk
             values["label"] = question.label
             values["order"] = question.order
+            values["type"] = 2
             response_data.append(values)
+
         return response_data
