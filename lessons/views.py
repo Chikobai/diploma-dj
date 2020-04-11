@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
 from .models import Lesson, Question, Answer, LessonTaker
+from .models import Response as UserResponse
 from .serializers import LessonSerializer
 
 
@@ -71,9 +72,16 @@ class QuestionAnswersViewSet(viewsets.ViewSet):
 
         taker, created = LessonTaker.objects.get_or_create(user=user, lesson=lesson)
 
+        user_response_count = UserResponse.objects.filter(lesson_taker=taker, question=question).count()
+        if user_response_count > 0:
+            return self.get_response_data(False, 'Вы уже ответили', status.HTTP_400_BAD_REQUEST)
+
+        UserResponse.objects.create(lesson_taker=taker, question=question, answer=answer)
         if answer.is_true:
-            asd = taker.correct_answers+1
-            taker.correct_answers = asd
+            count = taker.correct_answers+1
+            taker.correct_answers = count
+            if taker.correct_answers == 4:
+                taker.completed = True
             taker.save()
             return self.get_response_data(True, 'Првильный ответ', status.HTTP_200_OK)
         else:
