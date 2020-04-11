@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Lesson, Question, VideoLesson, Answer
+from .models import Lesson, Question, VideoLesson, Answer, LessonTaker, Response
 from operator import itemgetter
 
 
@@ -24,7 +24,17 @@ class LessonShortSerializer(serializers.ModelSerializer):
 
     # get lesson count
     def get_result(self, obj):
-        count, passed = 0, 0
+        user = self.context['request'].user
+        questions = Question.objects.filter(lesson=obj)
+        count = questions.count()
+
+        try:
+            taker = LessonTaker.objects.get(user=user, lesson=obj)
+            responses = Response.objects.filter(lesson_taker=taker)
+            passed = responses.count()
+        except LessonTaker.DoesNotExist:
+            passed = 0
+
         return {
             'count': count,
             'passed': passed
