@@ -1,5 +1,4 @@
-from django.contrib.auth import logout
-from django.core.exceptions import ObjectDoesNotExist
+
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
@@ -88,11 +87,13 @@ class UserViewSet(viewsets.ViewSet):
                 return Response({"old_password": ["Wrong password."]}, status=status.HTTP_400_BAD_REQUEST)
             else:
                 user.set_password(serializer.data.get("new_password"))
+                user.last_token_expired = datetime.now()
                 user.save()
                 response = dict()
                 response['message_kz'] = 'Password satty ozgertildi'
                 response['message_ru'] = 'Password успешно изменен'
                 response['success'] = True
+                response['token'] = user.token
             return Response(response, status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
