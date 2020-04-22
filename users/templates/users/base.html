@@ -1,7 +1,25 @@
-{% autoescape off %}
-Hi {{ user.first_name }},
+<!DOCTYPE html>
+{% load static %}
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>SauatAshu.kz</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    </head>
+	<body>
 
-Please click on the link below to confirm your registration:
+        <header>
+            <div style="">
+                <div style="width: 100%; height: 60px;display: flex; justify-content: flex-start; align-items: center;">
+                    <div class="ml-5 pl-5"><h4>SauatAshu.kz</h4></div>
+                </div>
 
-{{ domain}}{{ url }}{{ uid }}
-{% endautoescape %}
+            </div>
+            <hr style="width: 100%; margin: 0px">
+
+        </header>
+        {% block content %}
+        {% endblock %}
+
+	</body>
+</html>

@@ -85,3 +85,8 @@ class LoginSerializer(serializers.Serializer):
             data['token'] = user.token
         return data
 
+
+class ResetPasswordSerializer(serializers.Serializer):
+    model = User
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)

@@ -1,7 +1,5 @@
 from django.contrib.auth.base_user import BaseUserManager
-from django.conf import settings
-from django.core.mail import send_mail
-from django.template.loader import render_to_string
+from users.send_email import send_email_confirm_url
 
 
 class UserManager(BaseUserManager):
@@ -22,20 +20,7 @@ class UserManager(BaseUserManager):
         user.email_verified = False
         user.is_active = True
         user.save(using=self._db)
-
-        subject = 'Thank you for registering'
-        # uid = str(user.token).split('.')[2]
-        message = render_to_string('users/base.html', {
-            'user': user,
-            'domain': 'http://127.0.0.1:8000/',
-            'url': 'user/confirm/',
-            'uid': user.pk
-        })
-
-        from_email = settings.EMAIL_HOST_USER
-        to_list = [email, settings.EMAIL_HOST_USER]
-
-        send_mail(subject, message, from_email, to_list, fail_silently=False)
+        send_email_confirm_url(user)
         return user
 
     def create_user(self, email, first_name, last_name, password=None, **extra_fields):

@@ -1,6 +1,8 @@
-{% autoescape off %}
-Hi {{ user.first_name }},
+{% extends 'users/base.html' %}
 
-Bla Bla Bla aasdasd:
+{% block content%}
+    Hi {{ user.first_name }},
 
-{% endautoescape %}
+    Bla Bla Bla aasdasd:
+
+{% endblock %}

@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+
 import jwt
 from django.conf import settings
 from django.contrib.auth.models import (AbstractBaseUser, PermissionsMixin)
@@ -13,6 +15,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     first_name = models.CharField(max_length=50, blank=True)
     last_name = models.CharField(max_length=50, blank=True)
+
+    last_token_expired = models.DateTimeField(default=datetime.now(), blank=True)
 
     is_staff = models.BooleanField(default=False)
 
@@ -38,17 +42,24 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.last_name
 
     def _generate_jwt_token(self):
-        exp = timezone.now() + timezone.timedelta(days=60)
-        iat = timezone.now()
-
+        exp = datetime.now() + timedelta(days=60)
+        iat = self.last_token_expired
         token = jwt.encode(
             {
                 'email': self.email,
                 'id': self.pk,
-                'iat': iat
+                'iat': iat,
+                'exp': exp
             },
             settings.SECRET_KEY,
             algorithm="HS256",
         )
 
         return token.decode("utf-8")
+
+
+# class Token(models.Model):
+#     user = models.OneToOneField(
+#         User, related_name='auth_token',
+#         on_delete=models.CASCADE
+#     )

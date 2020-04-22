@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from .models import Lesson, Question, VideoLesson, Answer, LessonTaker, Response
+from .models import Lesson, Question, VideoLesson, Answer, LessonTaker
+from .models import Response as UserResponse
 from operator import itemgetter
 
 
@@ -30,7 +31,7 @@ class LessonShortSerializer(serializers.ModelSerializer):
 
         try:
             taker = LessonTaker.objects.get(user=user, lesson=obj)
-            responses = Response.objects.filter(lesson_taker=taker)
+            responses = UserResponse.objects.filter(lesson_taker=taker)
             passed = responses.count()
         except LessonTaker.DoesNotExist:
             passed = 0
@@ -50,6 +51,7 @@ class LessonSerializer(serializers.ModelSerializer):
         fields = ['id', 'title', 'description', 'time', 'pages']
 
     def get_pages(self, obj):
+        user = self.context['request'].user
         response_data = list()
         videos = VideoLesson.objects.filter(lesson=obj)
         questions = Question.objects.filter(lesson=obj)
@@ -70,6 +72,12 @@ class LessonSerializer(serializers.ModelSerializer):
                 answers_data.append(data)
 
             values['answers'] = answers_data
+            taker = LessonTaker.objects.get(user=user, lesson=obj)
+            user_response_count = UserResponse.objects.filter(lesson_taker=taker, question=question).count()
+            if user_response_count > 0:
+                values['is_answered'] = True
+            else:
+                values['is_answered'] = False
             response_data.append(values)
 
         for video in videos:
@@ -79,6 +87,7 @@ class LessonSerializer(serializers.ModelSerializer):
             values["order"] = video.order
             values["type"] = 1
             values["answers"] = None
+            values['is_answered'] = None
             response_data.append(values)
 
         sorted_data = sorted(response_data, key=itemgetter('order'))

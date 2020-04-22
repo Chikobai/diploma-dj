@@ -88,5 +88,11 @@ class JWTAuthentication(authentication.BaseAuthentication):
             msg = 'This user has been deactivated.'
             raise exceptions.AuthenticationFailed(msg)
 
+        orig_iat = int(payload['iat'])
+        token_last_expired = int(user.last_token_expired.timestamp())
+        if orig_iat < token_last_expired:
+            msg = 'Users must re-authenticate after logging out.'
+            raise exceptions.AuthenticationFailed(msg)
+
         return (user, token)
 

@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.db import models
 from modules.models import Module
 
@@ -47,6 +49,7 @@ class Response(models.Model):
     lesson_taker = models.ForeignKey(LessonTaker, on_delete=models.CASCADE)
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     answer = models.ForeignKey(Answer, on_delete=models.CASCADE, null=True, blank=True)
+    time = models.DateTimeField(default=datetime.now, blank=True)
 
     def __str__(self):
         return self.question.label
