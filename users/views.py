@@ -1,4 +1,3 @@
-
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
@@ -11,7 +10,7 @@ from datetime import datetime
 
 from lessons.models import LessonTaker, Response as UserResponse
 
-from users.send_email import send_reset_password_url
+from users.send_email import send_reset_password_url, send_change_email
 from .models import User
 from .serializers import (LoginSerializer, RegistrationSerializer, ResetPasswordSerializer)
 
@@ -116,8 +115,37 @@ class UserViewSet(viewsets.ViewSet):
         response['success'] = True
         return Response(response, status=status.HTTP_200_OK)
 
+    @action(detail=False, methods=['post'], url_path='change-email',
+            permission_classes=[permissions.AllowAny])
+    def change_email(self, request):
+        response = dict()
+        if not request.user.is_authenticated:
+            response['message_kz'] = 'Пайдаланушының аутентификациясы қажет'
+            response['message_ru'] = 'Требуется аутентикация пользователя'
+            response['success'] = False
+            return Response(response, status=status.HTTP_401_UNAUTHORIZED)
+        current_user = request.user
+        email = request.data.get('email', None)
+        if email is None:
+            return Response({"email": ["This field is required."]}, status=status.HTTP_400_BAD_REQUEST)
 
-def user_confirm_view(request, id):
+        user_count = User.objects.filter(email=email).count()
+        if user_count > 0:
+            response['message_kz'] = 'Бұл электрондық пошта мекенжайы бұрыннан бар. Жаңа электрондық пошта' \
+                                     ' мекенжайын пайдаланып көріңіз.'
+            response['message_ru'] = 'Этот адрес электронной почты уже существует. ' \
+                                     'Попробуйте новый адрес электронной почты.'
+            response['success'] = False
+            return Response(response, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            send_change_email(current_user, email, request)
+            response['message_kz'] = 'Сіздің жаңа электрондық пошта мекенжайыңызға хабарлама жіберілді.'
+            response['message_ru'] = 'Вам было отправлено сообщение на новый адрес электронной почты'
+            response['success'] = True
+            return Response(response, status=status.HTTP_200_OK)
+
+
+def email_confirm_view(request, id):
     user = User.objects.get(pk=id)
     user.email_verified = True
     user.save()
@@ -138,8 +166,6 @@ def save_new_password_view(request):
     if request.method == 'POST':
         user_id = request.POST.get("user_id", None)
         password1 = request.POST.get("password1", "")
-        print(user_id)
-        print(password1)
         if user_id is None:
             return HttpResponse('This page does not exist.')
         try:
@@ -148,6 +174,31 @@ def save_new_password_view(request):
             user.last_token_expired = datetime.now()
             user.save()
             return render(request, 'users/confirm_user.html')
+        except User.DoesNotExist:
+            return HttpResponse('This page does not exist.')
+
+    else:
+        return HttpResponse('This page does not exist.')
+
+
+@csrf_exempt
+def change_email_confirm_view(request):
+    if request.method == 'POST':
+        uid = request.POST.get("user_id", None)
+        email = request.POST.get("email", None)
+        if uid is None:
+            return HttpResponse('This page does not exist.')
+        if email is None:
+            return HttpResponse('This page does not exist.')
+        try:
+            user = User.objects.get(pk=uid)
+            user.email = email
+            user.last_token_expired = datetime.now()
+            user.save()
+            print(user.email)
+            context = dict()
+            context['uid'] = uid
+            return render(request, 'users/confirm_user.html', context=context)
         except User.DoesNotExist:
             return HttpResponse('This page does not exist.')
 

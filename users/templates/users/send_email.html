@@ -32,12 +32,15 @@
     <body>
         <p>Привет {{ user.first_name }},</p>
 
-        <h3>Чтобы изменить свой пароль вам необходимо перейти в другую страницу.</h3>
+        <h3>{{ title }}</h3>
         </br></br>
 
         <form action="{{ domain}}{{ url }}" method="post">
             <input type="hidden" name="user_id" value="{{ user.id }}">
-             <button class="default-button green-button" type="submit">Изменить</button>
+            {% if is_email_hidden %}
+                <input type="hidden" name="email" value="{{ user.email }}">
+            {% endif %}
+             <button class="default-button green-button" type="submit">{{ btn_text }}</button>
         </form>
     </body>
 </html>

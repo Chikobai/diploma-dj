@@ -3,5 +3,9 @@ Hi {{ user.first_name }},
 
 Please click on the link below to confirm your registration:
 
+     <form action="{{ domain}}{{ url }}" method="post">
+            <input type="hidden" name="user_id" value="{{ user.id }}">
+             <button class="default-button green-button" type="submit">Изменить</button>
+        </form>
 {{ domain}}{{ url }}{{ uid }}
 {% endautoescape %}

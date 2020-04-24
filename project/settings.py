@@ -114,7 +114,6 @@ STATICFILES_DIRS = [
 ]
 
 AUTH_USER_MODEL = 'users.User'
-SECRET_KEY = "MY_SECRET_KYE"
 
 from .email_info import *
 
