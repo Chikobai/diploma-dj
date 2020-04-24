@@ -10,7 +10,7 @@ router.register('user', UserViewSet, 'user')
 
 urlpatterns = [
     re_path(r'', include(router.urls)),
-    url(r'^user/confirm/(?P<id>\w+)$', email_confirm_view, name='email_confirm'),
+    url(r'^user/confirm/', email_confirm_view, name='email_confirm'),
     url(r'^user/confirm-change-email/', change_email_confirm_view, name='change_email_confirm'),
     url(r'^user/reset-password-confirm/', reset_password_view, name='reset_password'),
     url(r'^user/save-password/', save_new_password_view, name='save_password'),

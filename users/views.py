@@ -144,12 +144,28 @@ class UserViewSet(viewsets.ViewSet):
             response['success'] = True
             return Response(response, status=status.HTTP_200_OK)
 
+@csrf_exempt
+def email_confirm_view(request,):
+    if request.method == 'POST':
+        uid = request.POST.get("user_id", None)
+        if uid is None:
+            return HttpResponse('This page does not exist.')
+        try:
+            user = User.objects.get(pk=uid)
+            user.email_verified = True
+            user.last_token_expired = datetime.now()
+            user.save()
+            context = {
+                'user': user,
+                'message': "Ваша заявка успешно принято"
+            }
+            return render(request, 'users/confirm_user.html', context=context)
+        except User.DoesNotExist:
+            return HttpResponse('This page does not exist.')
 
-def email_confirm_view(request, id):
-    user = User.objects.get(pk=id)
-    user.email_verified = True
-    user.save()
-    return render(request, 'users/confirm_user.html', {'user': user})
+    else:
+        return HttpResponse('This page does not exist.')
+
 
 
 @csrf_exempt
@@ -173,7 +189,11 @@ def save_new_password_view(request):
             user.set_password(password1)
             user.last_token_expired = datetime.now()
             user.save()
-            return render(request, 'users/confirm_user.html')
+            context = {
+                'user': user,
+                'message': "Ваши данные успешно сохранены"
+            }
+            return render(request, 'users/confirm_user.html', context=context)
         except User.DoesNotExist:
             return HttpResponse('This page does not exist.')
 
@@ -196,8 +216,10 @@ def change_email_confirm_view(request):
             user.last_token_expired = datetime.now()
             user.save()
             print(user.email)
-            context = dict()
-            context['uid'] = uid
+            context = {
+                'user': user,
+                'message': "Вы успешно изменили."
+            }
             return render(request, 'users/confirm_user.html', context=context)
         except User.DoesNotExist:
             return HttpResponse('This page does not exist.')
