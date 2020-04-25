@@ -37,6 +37,7 @@
 
         <form action="{{ domain}}{{ url }}" method="post">
             <input type="hidden" name="user_id" value="{{ user.id }}">
+            <input type="hidden" name="domain" value="{{ domain }}">
             {% if is_email_hidden %}
                 <input type="hidden" name="email" value="{{ user.email }}">
             {% endif %}

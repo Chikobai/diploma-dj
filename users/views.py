@@ -172,7 +172,8 @@ def email_confirm_view(request,):
 def reset_password_view(request):
     if request.method == 'POST':
         user_id = request.POST.get("user_id")
-        return render(request, 'users/reset_password.html', {'user': user_id})
+        domain = request.POST.get("domain")
+        return render(request, 'users/reset_password.html', {'user': user_id, 'domain': domain})
     else:
         return render(request, 'users/confirm_user.html')
 

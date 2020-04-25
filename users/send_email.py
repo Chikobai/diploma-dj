@@ -2,12 +2,14 @@ from django.template.loader import render_to_string
 from django.conf import settings
 from django.core.mail import send_mail
 
+DOMAIN = 'http://127.0.0.1:8000/'
+
 
 def send_email_confirm_url(user):
     subject = 'Thank you for registering'
     message = render_to_string('users/send_email.html', {
         'user': user,
-        'domain': 'http://127.0.0.1:8000/',
+        'domain': DOMAIN,
         'url': 'user/confirm/',
         'title': "Вы должны перейти на другую страницу, чтобы подтвердить электронную адресную пояту",
         'btn_text': "Подтвердить",
@@ -27,7 +29,7 @@ def send_reset_password_url(user, request=None):
         request=request,
         context={
             'user': user,
-            'domain': 'http://127.0.0.1:8000/',
+            'domain': DOMAIN,
             'url': 'user/reset-password-confirm/',
             'title': "Чтобы изменить свой пароль вам необходимо перейти в другую страницу.",
             'btn_text': "Изменить",
@@ -48,7 +50,7 @@ def send_change_email(user, new_email, request=None):
         request=request,
         context={
             'user': user,
-            'domain': 'http://127.0.0.1:8000/',
+            'domain': DOMAIN,
             'url': 'user/confirm-change-email/',
             'title': "Вы должны перейти на другую страницу, чтобы подтвердить изменения в вашей электронной почте",
             'btn_text': "Подтвердить",

@@ -72,8 +72,11 @@ class LessonSerializer(serializers.ModelSerializer):
                 answers_data.append(data)
 
             values['answers'] = answers_data
-            taker = LessonTaker.objects.get(user=user, lesson=obj)
-            user_response_count = UserResponse.objects.filter(lesson_taker=taker, question=question).count()
+            try:
+                taker = LessonTaker.objects.get(user=user, lesson=obj)
+                user_response_count = UserResponse.objects.filter(lesson_taker=taker, question=question).count()
+            except LessonTaker.DoesNotExist:
+                user_response_count=0
             if user_response_count > 0:
                 values['is_answered'] = True
             else:
