@@ -5,6 +5,8 @@ from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework import permissions
+from rest_framework.generics import GenericAPIView
+from rest_framework.mixins import UpdateModelMixin
 from rest_framework.response import Response
 from datetime import datetime
 
@@ -12,7 +14,19 @@ from lessons.models import LessonTaker, Response as UserResponse
 
 from users.send_email import send_reset_password_url, send_change_email
 from .models import User
-from .serializers import (LoginSerializer, RegistrationSerializer, ResetPasswordSerializer)
+from .serializers import (LoginSerializer, RegistrationSerializer, ResetPasswordSerializer, UserSerializer)
+
+
+class UserPartialUpdateView(GenericAPIView, UpdateModelMixin):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+    def get_object(self):
+        return self.request.user
+
+    def put(self, request, *args, **kwargs):
+        # if request.user.phone != request.data['phone']:
+        return self.partial_update(request, *args, **kwargs)
 
 
 class UserAuthViewSet(viewsets.ViewSet):
@@ -62,6 +76,18 @@ class UserAuthViewSet(viewsets.ViewSet):
 
 
 class UserViewSet(viewsets.ViewSet):
+
+    @action(detail=False, methods=['post'], permission_classes=[permissions.IsAuthenticated])
+    def profile(self, request):
+        user = request.user
+        serializer = UserSerializer(instance=user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    # @action(detail=False, methods=['post'], url_path='update-image', permission_classes=[permissions.IsAuthenticated])
+    # def update_image(self, request):
+    #     user = request.user
+    #     serializer = UserSerializer(instance=user)
+    #     return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=['post'], permission_classes=[permissions.IsAuthenticated])
     def statistics(self, request):

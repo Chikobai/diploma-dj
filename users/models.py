@@ -9,12 +9,19 @@ from django.utils import timezone
 from .managers import UserManager
 
 
+def account_directory_path(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
+    # return 'images/accounts/user_{0}/{1}'.format(instance.user.id, filename)
+    return 'images/users/user_' + filename
+
+
 class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(validators=[validate_email], max_length=128, unique=True)
     email_verified = models.BooleanField(default=False)
 
     first_name = models.CharField(max_length=50, blank=True)
     last_name = models.CharField(max_length=50, blank=True)
+    image = models.ImageField(upload_to=account_directory_path, null=True, blank=True)
 
     last_token_expired = models.DateTimeField(default=datetime.now(), blank=True)
 
