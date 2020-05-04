@@ -5,13 +5,10 @@ from django.conf import settings
 from django.contrib.auth.models import (AbstractBaseUser, PermissionsMixin)
 from django.core.validators import (validate_email)
 from django.db import models
-from django.utils import timezone
 from .managers import UserManager
 
 
 def account_directory_path(instance, filename):
-    # file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
-    # return 'images/accounts/user_{0}/{1}'.format(instance.user.id, filename)
     return 'images/users/user_' + filename
 
 

@@ -33,7 +33,7 @@ class UserAuthViewSet(viewsets.ViewSet):
 
     @action(detail=False, methods=['post'], permission_classes=[permissions.AllowAny])
     def login(self, request):
-        serializer = LoginSerializer(data=request.data)
+        serializer = LoginSerializer(data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
         if serializer.data['success']:
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -80,14 +80,8 @@ class UserViewSet(viewsets.ViewSet):
     @action(detail=False, methods=['post'], permission_classes=[permissions.IsAuthenticated])
     def profile(self, request):
         user = request.user
-        serializer = UserSerializer(instance=user)
+        serializer = UserSerializer(instance=user, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)
-
-    # @action(detail=False, methods=['post'], url_path='update-image', permission_classes=[permissions.IsAuthenticated])
-    # def update_image(self, request):
-    #     user = request.user
-    #     serializer = UserSerializer(instance=user)
-    #     return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=['post'], permission_classes=[permissions.IsAuthenticated])
     def statistics(self, request):

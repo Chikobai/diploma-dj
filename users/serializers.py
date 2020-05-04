@@ -5,12 +5,21 @@ from rest_framework.validators import UniqueValidator
 
 from .models import User
 
+MEDIA_BASE_URL = "https://www.pythonanywhere.com/user/usernotfound/files/home/usernotfound/"
 
 class UserSerializer(serializers.ModelSerializer):
+    image = serializers.SerializerMethodField()
 
     class Meta:
         model = User
         fields = ['id', 'email', 'first_name', 'last_name', 'image']
+
+    def get_image(self, obj):
+        image_name = getattr(obj, 'image', None)
+        if image_name is None:
+            return None
+        return f'{MEDIA_BASE_URL}{image_name}'
+
 
 
 class RegistrationSerializer(serializers.Serializer):
