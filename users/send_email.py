@@ -2,7 +2,7 @@ from django.template.loader import render_to_string
 from django.conf import settings
 from django.core.mail import send_mail
 
-DOMAIN = 'http://127.0.0.1:8000/'
+DOMAIN = 'https://usernotfound.pythonanywhere.com/'
 
 
 def send_email_confirm_url(user):

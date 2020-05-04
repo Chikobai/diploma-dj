@@ -16,7 +16,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     def get_image(self, obj):
         image_name = getattr(obj, 'image', None)
-        if image_name is None:
+        if image_name == '':
             return None
         return f'{MEDIA_BASE_URL}{image_name}'
 

@@ -26,7 +26,18 @@ class UserPartialUpdateView(GenericAPIView, UpdateModelMixin):
 
     def put(self, request, *args, **kwargs):
         # if request.user.phone != request.data['phone']:
-        return self.partial_update(request, *args, **kwargs)
+        partial = True
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+
+        image = request.data.get("image", None)
+        if image is not None:
+            instance.image = image
+            instance.save()
+        self.perform_update(serializer)
+
+        return Response(serializer.data)
 
 
 class UserAuthViewSet(viewsets.ViewSet):
