@@ -7,19 +7,20 @@ from .models import User
 
 MEDIA_BASE_URL = "https://www.pythonanywhere.com/user/usernotfound/files/home/usernotfound/"
 
+
 class UserSerializer(serializers.ModelSerializer):
-    image = serializers.SerializerMethodField()
+    image = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = User
         fields = ['id', 'email', 'first_name', 'last_name', 'image']
+
 
     def get_image(self, obj):
         image_name = getattr(obj, 'image', None)
         if image_name == '':
             return None
         return f'{MEDIA_BASE_URL}{image_name}'
-
 
 
 class RegistrationSerializer(serializers.Serializer):
@@ -60,39 +61,57 @@ class RegistrationSerializer(serializers.Serializer):
 class LoginSerializer(serializers.Serializer):
     email = serializers.CharField(write_only=True)
     password = serializers.CharField(write_only=True)
+    success = serializers.BooleanField(read_only=True, default=False)
     token = serializers.CharField(read_only=True)
     message = serializers.CharField(read_only=True)
-    success = serializers.BooleanField(read_only=True, default=False)
+    profile = serializers.SerializerMethodField(read_only=True)
+
+    def to_representation(self, obj):
+        ret = super(LoginSerializer, self).to_representation(obj)
+        if not ret['success']:
+            ret.pop('profile')
+        return ret
 
     def validate(self, data):
 
         email = data.get('email', None)
         password = data.get('password', None)
+        data['profile'] = None
         if email is None:
             data['success'] = False
             data['message'] = 'An email address is required to log in.'
+            return data
 
         if password is None:
             data['success'] = False
             data['message'] = 'A password is required to log in.'
+            return data
 
         user = authenticate(username=email, password=password)
 
         if user is None:
             data['success'] = False
             data['message'] = 'A user with this email and password was not found.'
+            return data
 
         elif not user.email_verified:
             data['success'] = False
             data['message'] = 'This user email not verified.'
+            return data
 
         elif not user.is_active:
             data['success'] = False
             data['message'] = 'This user has been deactivated.'
+            return data
         else:
             data['success'] = True
             data['token'] = user.token
-        return data
+            serializer = UserSerializer(instance=user, context={'request': self.context['request']})
+            data['profile'] = serializer.data
+            return data
+
+    def get_profile(self, obj):
+        return obj["profile"]
 
 
 class ResetPasswordSerializer(serializers.Serializer):
